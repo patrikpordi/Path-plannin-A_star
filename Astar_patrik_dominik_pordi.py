@@ -24,6 +24,26 @@ goal=None
 l=None
 
 ######
+def bresenham_line(x0, y0, x1, y1):
+    points = []
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+
+    while x0 != x1 or y0 != y1:
+        points.append((x0, y0))
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x0 += sx
+        if e2 < dx:
+            err += dx
+            y0 += sy
+
+    points.append((x0, y0))
+    return points
 
 
 # Function for action set
@@ -38,7 +58,7 @@ def move(lst,i):
     cost-=math.dist((coords[0],coords[1]),goal)
     coords[0]+=int(np.round(l*np.cos(np.deg2rad(theta))))
     coords[1]+=int(np.round(l*np.sin(np.deg2rad(theta))))
-    rode = [(x, y) for x in range(x_s, coords[0]) for y in range(y_s, coords[1])]
+    rode = bresenham_line(x_s,y_s,coords[0],coords[1])
     theta_t+=theta
     if(theta_t>180):
         theta_t-=360
