@@ -31,18 +31,22 @@ l=None
 def move(lst,i):
     coords=list(lst[3])
     cost=lst[0]
+    x_s=coords[0]
+    y_s=coords[1]
     theta_t=lst[4]
     theta=[60, 30, 0, -30, -60][i]
     cost-=math.dist((coords[0],coords[1]),goal)
     coords[0]+=int(np.round(l*np.cos(np.deg2rad(theta))))
     coords[1]+=int(np.round(l*np.sin(np.deg2rad(theta))))
+    rode = [(x, y) for x in range(x_s, coords[0]) for y in range(y_s, coords[1])]
     theta_t+=theta
     if(theta_t>180):
         theta_t-=360
     elif(theta_t<-180):
         theta_t=360+theta_t
     cost+=l+math.dist((coords[0],coords[1]),goal)
-    return(tuple(coords), theta_t,cost)
+    return(tuple(coords), theta_t,cost,rode)
+
 
 
 # Start the algorithm, ask for user input in the given format, out of reachable points
@@ -183,9 +187,9 @@ while(True):
         break
     # Looping the 8 different actions
     for i in range(0,5):
-        coords,angle,cost=move(first,i)
+        coords,angle,cost,rode=move(first,i)
         # Checking if the new pixel is in the obstacle space or it was already explored
-        if(( (coords[0]<arr.shape[0] and coords[1]<arr.shape[1]) and not(coords in obstacles)) and not (coords in closed)):
+        if(( not (any(arr[x, y] == 1 for x, y in rode)) and(coords[0]<arr.shape[0] and coords[1]<arr.shape[1]) and not(coords in obstacles)) and not (coords in closed)):
             # Adding it to the queue if it was not there yet
             if not(coords in global_dict): 
                 global_dict[coords]=[cost, child, parent, coords,angle]
