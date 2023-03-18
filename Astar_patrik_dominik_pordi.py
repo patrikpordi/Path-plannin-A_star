@@ -185,7 +185,7 @@ while(True):
     for i in range(0,5):
         coords,angle,cost=move(first,i)
         # Checking if the new pixel is in the obstacle space or it was already explored
-        if((not(coords in obstacles)) and not (coords in closed)):
+        if(( (coords[0]<arr.shape[0] and coords[1]<arr.shape[1]) and not(coords in obstacles)) and not (coords in closed)):
             # Adding it to the queue if it was not there yet
             if not(coords in global_dict): 
                 global_dict[coords]=[cost, child, parent, coords,angle]
