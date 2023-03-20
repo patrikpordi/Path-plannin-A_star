@@ -1,9 +1,8 @@
-Author: Patrik Dominik Pördi
-Code: dijkstra_patrik_dominik_pordi.py
+Author: Rohit Reddy Pakhala, Patrik Dominik Pördi
+Code: a_star_rohit_patrik.py
 Instuctions:
     To run the program ensure that you have the following libraries:
-    time, pygame, numpy, queue, re
-    
+    time, pygame, numpy, queue, re, math    
 
     Download the code using git clone: 
 
