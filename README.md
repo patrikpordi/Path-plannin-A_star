@@ -20,10 +20,5 @@ Instuctions:
     For running the code use python3  in the linux or VSCode Terminal: python3 PATH/a_star_patrik_rohit.py
 
     Videos: https://drive.google.com/drive/folders/1LSTGlxnvXKAYCUGw4_C_r3Pmb_-WLYmB?usp=share_link
-
-
-
-
-    Video:https://drive.google.com/drive/folders/1LSTGlxnvXKAYCUGw4_C_r3Pmb_-WLYmB?usp=sharing
     
     

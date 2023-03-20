@@ -6,7 +6,6 @@ import re
 import time
 import math
 
-
 # Initializing the three used colors
 color = (255,255,255)
 color_2 = (255,200,150)
@@ -270,7 +269,6 @@ pygame.time.wait(10000)
 while running:
 # For loop through the event queue  
     for event in pygame.event.get():
-        
         # Check for QUIT event      
         if event.type == pygame.QUIT:
             pygame.quit()
