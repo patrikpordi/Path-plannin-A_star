@@ -1,4 +1,4 @@
-#Importing the library
+# Importing the library
 import numpy as np
 import pygame
 from queue import PriorityQueue
@@ -24,58 +24,25 @@ goal=None
 l=None
 
 ######
-def bresenham_line(x0, y0, x1, y1):
-    points = []
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
-    err = dx - dy
-
-    while x0 != x1 or y0 != y1:
-        points.append((x0, y0))
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x0 += sx
-        if e2 < dx:
-            err += dx
-            y0 += sy
-
-    points.append((x0, y0))
-    return points
 
 
 # Function for action set
 # 0:2left,1:left,2:forward,3:right,4:2right:
-def move(lst,thet):
+def move(lst,i):
     coords=list(lst[3])
-    # cost=lst[0]
-    uj=lst[5]+l
-    x_s=coords[0]
-    y_s=coords[1]
+    cost=lst[0]
     theta_t=lst[4]
-    # theta=[30, -30, 30, -30, 30]
-    theta_sum=thet+theta_t
-    # theta_t+=theta[i]
-    # if(theta_t>180):
-    #     theta_t-=360
-    # elif(theta_t<-180):
-    #     theta_t+=360
-    # cost-=math.dist((coords[0],coords[1]),goal)
-    # coords[0]+=(l*np.cos(np.deg2rad(theta_sum)))
-    x_n=round(x_s+(l*np.cos(np.deg2rad(theta_sum))))
-    # coords[0]=round(coords[0])
-    # coords[1]+=(l*np.sin(np.deg2rad(theta_sum)))
-    # coords[1]=round(coords[1])
-    y_n=round(y_s+l*np.sin(np.deg2rad(theta_sum)))
-    rode = bresenham_line(x_s,y_s,x_n,y_n)
-    # cost+=l+math.dist((coords[0],coords[1]),goal)
-    # cost2go=math.dist((coords[0],coords[1]),goal)
-    cost2go=math.dist((x_n,y_n),goal)
-    cost=cost2go+uj
-    return(tuple((x_n,y_n)), theta_sum,cost,rode,uj,cost2go)
-
+    theta=[60, 30, 0, -30, -60][i]
+    cost-=math.dist((coords[0],coords[1]),goal)
+    coords[0]+=int(np.round(l*np.cos(np.deg2rad(theta))))
+    coords[1]+=int(np.round(l*np.sin(np.deg2rad(theta))))
+    theta_t+=theta
+    if(theta_t>180):
+        theta_t-=360
+    elif(theta_t<-180):
+        theta_t=360+theta_t
+    cost+=l+math.dist((coords[0],coords[1]),goal)
+    return(tuple(coords), theta_t,cost)
 
 
 # Start the algorithm, ask for user input in the given format, out of reachable points
@@ -94,7 +61,6 @@ while True:
             pygame.draw.rect(surface, color, pygame.Rect(cr, cr, width_-2*cr, height_-2*cr))
             pygame.draw.rect(surface, color_2, pygame.Rect(100-cr, 150-cr, 50+2*cr, 100+2*cr))
             pygame.draw.rect(surface, color_2, pygame.Rect(100-cr, 0, 50+2*cr, 100+cr))
-            # pygame.draw.rect(surface, color_2, pygame.Rect(100,100 ,400 ,100 ))
 
 
             hexagon_dim = [(300,50-cr),(364.95190528+cr,87.5-((cr)*np.tan(np.pi*30/180))),
@@ -109,15 +75,15 @@ while True:
 
             # Convert surface to a 2D array with 0 for the specific color and 1 for other colors
             arr = np.zeros((surface.get_width(), surface.get_height()))
-            pix = pygame.surfarray.pixels3d(surface)
-            arr[np.where((pix == color_2).all(axis=2))] = 1
-            obs_np = np.where((pix == color_2).all(axis=2))
-            # print(obs_np[0].shape)
+            pixel = pygame.surfarray.pixels3d(surface)
+            arr[np.where((pixel == color_2).all(axis=2))] = 1
+            obs_np = np.where((pixel == color_2).all(axis=2))
+            print(obs_np[0].shape)
             obstacles={}
             for i in range(obs_np[0].shape[0]):
                 obs_key = (obs_np[0][i], obs_np[1][i])  # Create a new tuple (y, x)
                 obstacles[obs_key] = None  # Use the tuple as a key and assign a value of None
-            del pix
+            del pixel
             break
     else:
         print("Invalid input. Please enter clearance and radius values separated by a space, both of which should be positive integers.")
@@ -181,9 +147,7 @@ while True:
 
 # Defining the require variables for the algorithm, the pixels is a dictionary for the explored nodes
 pixels={}
-c2c=0
-c2g=math.dist(start,goal)
-d1 = [c2g+c2c, 0, -1,start, s_theta,c2c,c2g]
+d1 = [math.dist(start,goal), 0, -1,start, s_theta]
 Q = PriorityQueue()
 global_dict={}
 global_dict[start]=d1
@@ -199,46 +163,41 @@ start_time=time.time()
 # The algorithm
 while(True):
 
-    # # Check if there is any pixel that we haven't visited yet  
+    # Check if there is any pixel that we haven't visited yet  
     if(Q.empty()):
         print("Goal is unreachable")
         end_time=time.time()
         break
     # Popping the pixel with the lowest cost and adding it to the dictionary
     first = Q.get()
-    pixels[first[1]]=[first[0],first[2],first[3],first[4],first[5],first[6]]
+    pixels[first[1]]=[first[0],first[2],first[3],first[4]]
     parent=first[1]
     closed[first[3]]=None
-    # print(pixels[first[1]])
+    print(pixels[first[1]])
     
-    # # Checking if the goal was reached
+    # Checking if the goal was reached
     if(math.dist(first[3],goal)<0.5):
         g_key=first[1]
         print("Goal reached")
         end_time=time.time()
         break
     # Looping the 8 different actions
-    szog=[-60, -30,0, 30, 60]
     for i in range(0,5):
-        thet=szog[i]
-        coords,angle,cost,rode,c1,c2=move(first,thet)
+        coords,angle,cost=move(first,i)
         # Checking if the new pixel is in the obstacle space or it was already explored
-        if(( not (any(arr[x, y] == 1 for x, y in rode)) and(coords[0]<arr.shape[0] and coords[1]<arr.shape[1]) and not(coords in obstacles)) and not (coords in closed)):
-        # if( not(surface.get_at(coords)==color_2) and not (coords in closed)):
+        if((not(coords in obstacles)) and not (coords in closed)):
             # Adding it to the queue if it was not there yet
             if not(coords in global_dict): 
-                global_dict[coords]=[cost, child, parent, coords,angle,c1,c2]
+                global_dict[coords]=[cost, child, parent, coords,angle]
                 Q.put(global_dict[coords])
                 child += 1
 
             # Updating the queue if the coordinate is found with lower cost
             else:
                
-                if(global_dict[coords][5]>c1):
-                    global_dict[coords][5]=c1
+                if(global_dict[coords][0]>cost):
                     global_dict[coords][2]=parent
                     global_dict[coords][0]=cost
-    
 
 # Creating the end display
 s=pygame.display.set_mode((width_,height_))
@@ -249,25 +208,25 @@ pygame.display.update()
 for value in pixels.values():
     s.set_at(value[2],(255,0,0))
     pygame.display.update()
-print("Len:",len(pixels))
-# print(pixels)
+
+
 # Showing the optimal path if the goal was found
-# if(not (Q.empty())):   
-#     value = g_key
-#     # next(i for i in pixels if pixels[i][-1] == goal)
-#     # print(pixels[value][0]-math.dist(goal,pixels[value][2]))
-#     # Backtrack and generate the solution path
-#     path=[]
-#     while(pixels[value][1]!=-1):
-#         path.append(pixels[value][2])
-#         value=pixels[value][1]
-#     path.append(pixels[value][2])
-#     path.reverse()
+if(not (Q.empty())):   
+    value = g_key
+    # next(i for i in pixels if pixels[i][-1] == goal)
+    print(pixels[value][0]-math.dist(goal,pixels[value][2]))
+    # Backtrack and generate the solution path
+    path=[]
+    while(pixels[value][1]!=-1):
+        path.append(pixels[value][2])
+        value=pixels[value][1]
+    path.append(pixels[value][2])
+    path.reverse()
     
-#     # Displaying the path
-#     for walk in path:
-#         s.set_at(walk,(0,0,0))
-#         pygame.display.update()
+    # Displaying the path
+    for walk in path:
+        s.set_at(walk,(0,0,0))
+        pygame.display.update()
 
     
 # Printing the time used by the algorithm
