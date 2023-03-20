@@ -7,8 +7,8 @@ Instuctions:
     Download the code using git clone: https://github.com/patrikpordi/Path-plannin-A_star
 
     For running the code use python3  in the linux or VSCode Terminal: python3 PATH/a_star_patrik_rohit.py
-    Write the start and goal coordinates on the terminal
+    Follow the guidence and input the clearence, radius, stepsize , start(x,y,theta) goal(x,y,theta)
 
-    Video is inside the zip file
+    Video:https://drive.google.com/drive/folders/1LSTGlxnvXKAYCUGw4_C_r3Pmb_-WLYmB?usp=sharing
     
     
