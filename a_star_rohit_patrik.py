@@ -18,10 +18,10 @@ width_, height_ = 600, 250
 # Initializing surface
 surface = pygame.Surface((width_,height_))
 surface.fill(color_2)
-goal=None
-l=None
+goal=None # goal
+l=None #step size
 
-# Checking the path to do not go through obstackles
+# Checking the path to do not go through obstackles, all the points are calculated between the start and end point
 def bresenham_line(x0, y0, x1, y1):
     points = []
     dx = abs(x1 - x0)
@@ -251,11 +251,10 @@ if(not (Q.empty())):
     path.append(pixels[value][2])
     path.reverse()
     
-    # Displaying the path with different color
+    # Displaying the path with blue 
     for i,walk in enumerate(path):
         if(i+1>len(path)-1):
             break
-
         pygame.draw.line(s,(0,0,255),walk,path[i+1],width=1)
         pygame.display.update()
 
